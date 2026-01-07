@@ -17,6 +17,7 @@ type config struct {
 
 func startRepl(cfg *config) {
 	scanner := bufio.NewScanner(os.Stdin)
+	var ext []string
 	for {
 		fmt.Print("Pokedex > ")
 		scanner.Scan()
@@ -25,9 +26,12 @@ func startRepl(cfg *config) {
 			continue
 		}
 		cmd := words[0]
+		if len(words) > 1 {
+			ext = words[1:]
+		}
 		command, exists := getCommands()[cmd]
 		if exists {
-			if err := command.callback(cfg); err != nil {
+			if err := command.callback(cfg, ext...); err != nil {
 				fmt.Println("Error executing command:", err)
 			}
 			continue
@@ -41,7 +45,7 @@ func startRepl(cfg *config) {
 type cliCommand struct {
 	name        string
 	description string
-	callback    func(*config) error
+	callback    func(*config, ...string) error
 }
 
 func cleanInput(text string) []string {
@@ -71,6 +75,11 @@ func getCommands() map[string]cliCommand {
 			name:        "mapb",
 			description: "Get the previous page of locations",
 			callback:    commandMapb,
+		},
+		"explore": {
+			name:        "explore <location>",
+			description: "Explore a location to see which Pokemons are there",
+			callback:    commandExplore,
 		},
 	}
 }
