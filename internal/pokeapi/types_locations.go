@@ -1,6 +1,17 @@
 package pokeapi
 
-type LocationPokemons struct {
+type RespShallowLocations struct {
+	Count    int     `json:"count"`
+	Next     *string `json:"next"`
+	Previous *string `json:"previous"`
+	Results  []struct {
+		Name string `json:"name"`
+		URL  string `json:"url"`
+	} `json:"results"`
+}
+
+
+type Locations struct {
 	EncounterMethodRates []struct {
 		EncounterMethod struct {
 			Name string `json:"name"`
@@ -52,3 +63,4 @@ type LocationPokemons struct {
 		} `json:"version_details"`
 	} `json:"pokemon_encounters"`
 }
+

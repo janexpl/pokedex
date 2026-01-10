@@ -13,9 +13,11 @@ type config struct {
 	pokeClient       pokeapi.Client
 	nextLocationsURL *string
 	prevLocationsURL *string
+	caughtPokemon    map[string]pokeapi.Pokemon
 }
 
 func startRepl(cfg *config) {
+	cfg.caughtPokemon = make(map[string]pokeapi.Pokemon)
 	scanner := bufio.NewScanner(os.Stdin)
 	var ext []string
 	for {
@@ -34,6 +36,7 @@ func startRepl(cfg *config) {
 			if err := command.callback(cfg, ext...); err != nil {
 				fmt.Println("Error executing command:", err)
 			}
+			ext = []string{}
 			continue
 		} else {
 			fmt.Println("Unknown command:", cmd)
@@ -80,6 +83,21 @@ func getCommands() map[string]cliCommand {
 			name:        "explore <location>",
 			description: "Explore a location to see which Pokemons are there",
 			callback:    commandExplore,
+		},
+		"catch": {
+			name:        "catch <pokemon>",
+			description: "Attempt to catch a Pokemon",
+			callback:    commandCatch,
+		},
+		"inspect": {
+			name:        "inspect <pokemon>",
+			description: "Inspect a caught Pokemon",
+			callback:    commandInspect,
+		},
+		"pokedex": {
+			name:        "pokedex",
+			description: "List all caught Pokemons",
+			callback:    commandPokdex,
 		},
 	}
 }
